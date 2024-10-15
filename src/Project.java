@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Project implements ActionListener {
     JFrame frame;
@@ -12,9 +13,11 @@ public class Project implements ActionListener {
     JButton plusSign, minusSign, multiplicationSign, divisionSign,
             dotSign, equalsSign, deleteSign, clearSign, squareRootSign, squareSign;
     JPanel panel;
+    ArrayList<Double> presentNumbers = new ArrayList<>();
+    ArrayList<Character> presentOperators = new ArrayList<>();
     Font font1 = new Font("SansSerif", Font.BOLD, 50), font2 = new Font("SansSerif", Font.BOLD, 20);
-    double num1 = 0, num2 = 0, finalValue = 0;
-    char operation;
+    double num1 = 0, finalValue = 0;
+
     Project(){
         frame = new JFrame("KalKULAtor");
         frame.setSize(500,460);
@@ -107,26 +110,26 @@ public class Project implements ActionListener {
         }
 
         if(e.getSource() == plusSign){
-            num1 = Double.parseDouble(textField.getText());
-            operation = '+';
+            presentNumbers.add(Double.parseDouble(textField.getText()));
+            presentOperators.add('+');
             textField.setText("");
         }
 
         else if(e.getSource() == minusSign){
-            num1 = Double.parseDouble(textField.getText());
-            operation = '-';
+            presentNumbers.add(Double.parseDouble(textField.getText()));
+            presentOperators.add('-');
             textField.setText("");
         }
 
         else if(e.getSource() == multiplicationSign){
-            num1 = Double.parseDouble(textField.getText());
-            operation = '*';
+            presentNumbers.add(Double.parseDouble(textField.getText()));
+            presentOperators.add('*');
             textField.setText("");
         }
 
         else if(e.getSource() == divisionSign){
-            num1 = Double.parseDouble(textField.getText());
-            operation = '/';
+            presentNumbers.add(Double.parseDouble(textField.getText()));
+            presentOperators.add('/');
             textField.setText("");
         }
 
@@ -134,12 +137,14 @@ public class Project implements ActionListener {
             num1 = Double.parseDouble(textField.getText());
             finalValue = Math.pow(num1, 2);
             textField.setText(String.valueOf(finalValue));
+            finalValue = num1;
         }
 
         else if(e.getSource() == squareRootSign){
             num1 = Double.parseDouble(textField.getText());
             finalValue = Math.sqrt(num1);
             textField.setText(String.valueOf(finalValue));
+            finalValue = num1;
         }
 
         else if(e.getSource() == dotSign){
@@ -147,28 +152,49 @@ public class Project implements ActionListener {
         }
 
         else if(e.getSource() == equalsSign){
-            num2 = Double.parseDouble(textField.getText());
-
-            switch(operation) {
-                case'+':
-                    finalValue = num1 + num2;
-                    break;
-                case'-':
-                    finalValue = num1 - num2;
-                    break;
-                case'*':
-                    finalValue = num1 * num2;
-                    break;
-                case'/':
-                    finalValue = num1 / num2;
-                    break;
+            if(presentNumbers.isEmpty()){
+                textField.setText("ERROR");
+                return;
             }
+
+            presentNumbers.add(Double.parseDouble(textField.getText()));
+
+            for (int i = 0; i < presentOperators.size(); i++) {
+                char localOperation = presentOperators.get(i);
+                if (localOperation == '*' || localOperation == '/') {
+                    double localResult;
+                    if (localOperation == '*') {
+                        localResult = presentNumbers.get(i) * presentNumbers.get(i + 1);
+                    } else {
+                        localResult = presentNumbers.get(i) / presentNumbers.get(i + 1);
+                    }
+                    presentNumbers.set(i, localResult);
+                    presentNumbers.remove(i + 1);
+                    presentOperators.remove(i);
+                    i--;
+                }
+            }
+
+            finalValue = presentNumbers.getFirst();
+            for(int i = 0; i < presentOperators.size(); i++){
+                char localOperation = presentOperators.get(i);
+                if(localOperation == '+'){
+                    finalValue += presentNumbers.get(i + 1);
+                }
+                else if (localOperation == '-') {
+                    finalValue -= presentNumbers.get(i + 1);
+                }
+            }
+
             textField.setText(String.valueOf(finalValue));
-            num1 = finalValue;
+
+            presentNumbers.clear();
+            presentOperators.clear();
         }
 
         else if(e.getSource() == clearSign) {
             textField.setText("");
+            finalValue = 0;
         }
 
         else if(e.getSource() == deleteSign) {
