@@ -102,13 +102,13 @@ public class Project implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e){
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 10; i++){                                     //obsluga przyciskow z cyframi
             if(e.getSource() == numbers[i]){
                 textField.setText(textField.getText().concat(String.valueOf(i)));
             }
         }
 
-        if(e.getSource() == plusSign){
+        if(e.getSource() == plusSign){                                  //obsluga przysiskow z operacjami
             presentNumbers.add(Double.parseDouble(textField.getText()));
             presentOperators.add('+');
             textField.setText("");
@@ -146,7 +146,7 @@ public class Project implements ActionListener {
             finalValue = num1;
         }
 
-        else if(e.getSource() == dotSign){
+        else if(e.getSource() == dotSign){                          //obsluga kropki
             String scanner = textField.getText();
             for(int i = 0; i < scanner.length(); i++) {
                 if(scanner.contains(".")){
@@ -156,7 +156,7 @@ public class Project implements ActionListener {
             textField.setText(textField.getText().concat("."));
         }
 
-        else if(e.getSource() == equalsSign){
+        else if(e.getSource() == equalsSign){                       //obsluga wyniku
             if(presentNumbers.isEmpty()){
                 textField.setText("ERROR");
                 return;
@@ -197,7 +197,7 @@ public class Project implements ActionListener {
             presentOperators.clear();
         }
 
-        else if(e.getSource() == clearSign) {
+        else if(e.getSource() == clearSign) {               //clear i delete
             textField.setText("");
             finalValue = 0;
         }
@@ -208,9 +208,5 @@ public class Project implements ActionListener {
                 textField.setText(presentValue.substring(0, presentValue.length() - 1));
             }
         }
-
-    }
-    public static void main(String[] args) {
-        new Project();
     }
 }
