@@ -17,7 +17,6 @@ public class Project implements ActionListener {
     ArrayList<Character> presentOperators = new ArrayList<>();
     Font font1 = new Font("SansSerif", Font.BOLD, 50), font2 = new Font("SansSerif", Font.BOLD, 20);
     double num1 = 0, finalValue = 0;
-
     Project(){
         frame = new JFrame("KalKULAtor");
         frame.setSize(500,460);
@@ -148,6 +147,12 @@ public class Project implements ActionListener {
         }
 
         else if(e.getSource() == dotSign){
+            String scanner = textField.getText();
+            for(int i = 0; i < scanner.length(); i++) {
+                if(scanner.contains(".")){
+                    return;
+                }
+            }
             textField.setText(textField.getText().concat("."));
         }
 
@@ -205,7 +210,6 @@ public class Project implements ActionListener {
         }
 
     }
-
     public static void main(String[] args) {
         new Project();
     }
