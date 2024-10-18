@@ -9,9 +9,10 @@ public class Project implements ActionListener {
     JTextField textField;
     JButton[] numbers = new JButton[10];
 
-    JButton[] mathSigns = new JButton[10];
+    JButton[] mathSigns = new JButton[14];
     JButton plusSign, minusSign, multiplicationSign, divisionSign,
-            dotSign, equalsSign, deleteSign, clearSign, squareRootSign, squareSign;
+            dotSign, equalsSign, deleteSign, clearSign, squareRootSign, squareSign,
+            sineSign, cosineSign, tangentSign, cotangentSign;
     JPanel panel;
     ArrayList<Double> presentNumbers = new ArrayList<>();
     ArrayList<Character> presentOperators = new ArrayList<>();
@@ -19,7 +20,7 @@ public class Project implements ActionListener {
     double num1 = 0, finalValue = 0;
     Project(){
         frame = new JFrame("KalKULAtor");
-        frame.setSize(500,460);
+        frame.setSize(600,460);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -38,6 +39,10 @@ public class Project implements ActionListener {
         clearSign = new JButton("C");
         squareSign = new JButton("x²");
         squareRootSign = new JButton("√");
+        sineSign = new JButton("sin()");
+        cosineSign = new JButton("cos()");
+        tangentSign = new JButton("tan()");
+        cotangentSign = new JButton("ctg()");
 
         mathSigns[0] = plusSign;
         mathSigns[1] = minusSign;
@@ -49,8 +54,12 @@ public class Project implements ActionListener {
         mathSigns[7] = clearSign;
         mathSigns[8] = deleteSign;
         mathSigns[9] = equalsSign;
+        mathSigns[10] = sineSign;
+        mathSigns[11] = cosineSign;
+        mathSigns[12] = tangentSign;
+        mathSigns[13] = cotangentSign;
 
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 14; i++){
             mathSigns[i].addActionListener(this);
             mathSigns[i].setFocusable(false);
             mathSigns[i].setFont(font2);
@@ -58,6 +67,10 @@ public class Project implements ActionListener {
 
         for(int i = 0; i < 7; i++){
             mathSigns[i].setBackground(Color.LIGHT_GRAY);
+        }
+
+        for(int i = 10; i < 14; i++){
+            mathSigns[i].setBackground(Color.PINK);
         }
 
         clearSign.setBackground(Color.gray);
@@ -72,13 +85,16 @@ public class Project implements ActionListener {
         }
 
         panel = new JPanel();
-        panel.setLayout(new GridLayout(6,4,10,10));
+        panel.setLayout(new GridLayout(7,4,10,10));
 
-
-        panel.add(squareRootSign);
-        panel.add(squareSign);
+        panel.add(sineSign);
+        panel.add(cosineSign);
         panel.add(clearSign);
         panel.add(deleteSign);
+        panel.add(tangentSign);
+        panel.add(cotangentSign);
+        panel.add(squareRootSign);
+        panel.add(squareSign);
         panel.add(numbers[1]);
         panel.add(numbers[2]);
         panel.add(numbers[3]);
@@ -91,10 +107,12 @@ public class Project implements ActionListener {
         panel.add(numbers[8]);
         panel.add(numbers[9]);
         panel.add(plusSign);
+
         panel.add(dotSign);
         panel.add(numbers[0]);
         panel.add(equalsSign);
         panel.add(minusSign);
+        panel.add(new JLabel(""));
 
         frame.add(textField, BorderLayout.NORTH);
         frame.add(panel, BorderLayout.CENTER);
