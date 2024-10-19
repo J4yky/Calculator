@@ -3,6 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class Project implements ActionListener {
     JFrame frame;
@@ -14,13 +21,15 @@ public class Project implements ActionListener {
             dotSign, equalsSign, deleteSign, clearSign, squareRootSign, squareSign,
             sineSign, cosineSign, tangentSign, cotangentSign;
     JPanel panel;
+    ChartPanel chartPanel;
     ArrayList<Double> presentNumbers = new ArrayList<>();
     ArrayList<Character> presentOperators = new ArrayList<>();
     Font font1 = new Font("SansSerif", Font.BOLD, 50), font2 = new Font("SansSerif", Font.BOLD, 20);
     double num1 = 0, finalValue = 0;
+    String function = "";
     Project(){
         frame = new JFrame("KalKULAtor");
-        frame.setSize(600,460);
+        frame.setSize(600,600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -65,7 +74,7 @@ public class Project implements ActionListener {
             mathSigns[i].setFont(font2);
         }
 
-        for(int i = 0; i < 7; i++){
+        for(int i = 0; i < 7; i++){                                         //kolorowanie przycisków
             mathSigns[i].setBackground(Color.LIGHT_GRAY);
         }
 
@@ -84,7 +93,7 @@ public class Project implements ActionListener {
             numbers[i].setFont(font2);
         }
 
-        panel = new JPanel();
+        panel = new JPanel();                                               //panel z przyciskami
         panel.setLayout(new GridLayout(7,4,10,10));
 
         panel.add(sineSign);
@@ -114,9 +123,72 @@ public class Project implements ActionListener {
         panel.add(minusSign);
         panel.add(new JLabel(""));
 
+        chartPanel = new ChartPanel(null);
+        chartPanel.setLayout(new BorderLayout());
+        chartPanel.setVisible(false);
+
         frame.add(textField, BorderLayout.NORTH);
         frame.add(panel, BorderLayout.CENTER);
+        frame.add(chartPanel, BorderLayout.EAST);
         frame.setVisible(true);
+    }
+
+    public void createChart(double usersNumber, double calculatedPoint, String function){
+        XYSeries series = new XYSeries(function + "(x)");
+        XYSeries highlightedPointSeries = new XYSeries("Obliczony punkt");
+
+        for(double x = -2 * Math.PI; x <= 2 * Math.PI; x += 0.1){
+            switch(function) {
+                case "sin":
+                    series.add(x, Math.sin(x));
+                    break;
+                case "cos":
+                    series.add(x, Math.cos(x));
+                    break;
+                case "tan":
+                    series.add(x, Math.tan(x));
+                    break;
+                case "ctg":
+                    if(Math.tan(x) != 0) {
+                        series.add(x, 1 / Math.tan(x));
+                    }
+                    break;
+            }
+        }
+
+        if(function.equals("ctg") && Math.tan(calculatedPoint) != 0) {
+            highlightedPointSeries.add(usersNumber, calculatedPoint);
+        }
+        else {
+            highlightedPointSeries.add(usersNumber, calculatedPoint);
+        }
+
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series);
+        dataset.addSeries(highlightedPointSeries);
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Wykres funkcji " + function + "(x)",
+                "x", "y",
+                dataset
+        );
+
+        XYPlot plot = chart.getXYPlot();
+        plot.getDomainAxis().setRange(-2 * Math.PI, 2 * Math.PI);
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesLinesVisible(0,true);
+        renderer.setSeriesShapesVisible(0, false);
+        renderer.setSeriesLinesVisible(1,false);
+        renderer.setSeriesShapesVisible(1, true);
+
+        plot.setRenderer(renderer);
+
+        chartPanel.setChart(chart);
+        chartPanel.setVisible(true);
+        frame.revalidate();
+        frame.repaint();
     }
 
     public void actionPerformed(ActionEvent e){
@@ -164,13 +236,47 @@ public class Project implements ActionListener {
             finalValue = num1;
         }
 
+        else if(e.getSource() == sineSign){
+            function = "sin";
+            num1 = Double.parseDouble(textField.getText());
+            finalValue = Math.sin(num1);
+            textField.setText(String.valueOf(finalValue));
+            createChart(num1, finalValue,function);
+            finalValue = num1;
+        }
+
+        else if(e.getSource() == cosineSign){
+            function = "cos";
+            num1 = Double.parseDouble(textField.getText());
+            finalValue = Math.cos(num1);
+            textField.setText(String.valueOf(finalValue));
+            createChart(num1, finalValue,function);
+            finalValue = num1;
+        }
+        else if(e.getSource() == tangentSign){
+            function = "tan";
+            num1 = Double.parseDouble(textField.getText());
+            finalValue = Math.tan(num1);
+            textField.setText(String.valueOf(finalValue));
+            createChart(num1, finalValue,function);
+            finalValue = num1;
+        }
+        else if(e.getSource() == cotangentSign){
+            function = "ctg";
+            num1 = Double.parseDouble(textField.getText());
+            finalValue = 1 / Math.tan(num1);
+            textField.setText(String.valueOf(finalValue));
+            createChart(num1, finalValue,function);
+            finalValue = num1;
+        }
+
         else if(e.getSource() == dotSign){                          //obsluga kropki
             String scanner = textField.getText();
-            for(int i = 0; i < scanner.length(); i++) {
-                if(scanner.contains(".")){
-                    return;
-                }
+
+            if(scanner.contains(".")){
+                return;
             }
+
             textField.setText(textField.getText().concat("."));
         }
 
