@@ -30,6 +30,7 @@ public class Project implements ActionListener {
     double num1 = 0, finalValue = 0;
     String function = "";
     Dimension defaultFrameSize;
+    JLabel coordinateLabel;
     Project(){
         frame = new JFrame("KalKULAtor");
         frame.setSize(600,600);
@@ -143,7 +144,7 @@ public class Project implements ActionListener {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries(function + "(x)");
 
-        for(double x = usersNumber -2 * Math.PI; x <= usersNumber + 2 * Math.PI; x += 0.1){
+        for(double x = usersNumber -2 * Math.PI; x <= usersNumber + 2 * Math.PI; x += 0.01){
             switch(function) {
                 case "sin":
                     series.add(x, Math.sin(x));
@@ -167,6 +168,13 @@ public class Project implements ActionListener {
         highlightedPointSeries.add(usersNumber, calculatedPoint);
         dataset.addSeries(series);
         dataset.addSeries(highlightedPointSeries);
+
+        if (coordinateLabel != null) {
+            chartPanel.remove(coordinateLabel);
+        }
+        coordinateLabel = new JLabel("");
+        coordinateLabel.setText("(" + String.format("%.2f", usersNumber) + ", " +
+                String.format("%.2f", calculatedPoint) + ")");
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 "Wykres funkcji " + function + "(x)",
@@ -202,6 +210,7 @@ public class Project implements ActionListener {
 
         plot.setRenderer(renderer);
 
+        chartPanel.add(coordinateLabel, BorderLayout.SOUTH);
         chartPanel.setChart(chart);
         chartPanel.setVisible(true);
         frame.pack();
