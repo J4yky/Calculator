@@ -21,7 +21,7 @@ public class Project implements ActionListener {
     JButton[] mathSigns = new JButton[14];
     JButton plusSign, minusSign, multiplicationSign, divisionSign,
             dotSign, equalsSign, deleteSign, clearSign, squareRootSign, squareSign,
-            sineSign, cosineSign, tangentSign, cotangentSign;
+            sineSign, cosineSign, tangentSign, percentageSign;
     JPanel panel;
     ChartPanel chartPanel;
     ArrayList<Double> presentNumbers = new ArrayList<>();
@@ -50,10 +50,11 @@ public class Project implements ActionListener {
         clearSign = new JButton("C");
         squareSign = new JButton("x²");
         squareRootSign = new JButton("√");
+        percentageSign = new JButton("%");
         sineSign = new JButton("sin()");
         cosineSign = new JButton("cos()");
         tangentSign = new JButton("tan()");
-        cotangentSign = new JButton("ctg()");
+
 
         mathSigns[0] = plusSign;
         mathSigns[1] = minusSign;
@@ -62,13 +63,14 @@ public class Project implements ActionListener {
         mathSigns[4] = dotSign;
         mathSigns[5] = squareRootSign;
         mathSigns[6] = squareSign;
-        mathSigns[7] = clearSign;
-        mathSigns[8] = deleteSign;
-        mathSigns[9] = equalsSign;
-        mathSigns[10] = sineSign;
-        mathSigns[11] = cosineSign;
-        mathSigns[12] = tangentSign;
-        mathSigns[13] = cotangentSign;
+        mathSigns[7] = percentageSign;
+        mathSigns[8] = clearSign;
+        mathSigns[9] = deleteSign;
+        mathSigns[10] = equalsSign;
+        mathSigns[11] = sineSign;
+        mathSigns[12] = cosineSign;
+        mathSigns[13] = tangentSign;
+
 
         for(int i = 0; i < 14; i++){
             mathSigns[i].addActionListener(this);
@@ -76,11 +78,11 @@ public class Project implements ActionListener {
             mathSigns[i].setFont(font2);
         }
 
-        for(int i = 0; i < 7; i++){                                         //kolorowanie przycisków
+        for(int i = 0; i < 8; i++){                                         //kolorowanie przycisków
             mathSigns[i].setBackground(Color.LIGHT_GRAY);
         }
 
-        for(int i = 10; i < 14; i++){
+        for(int i = 11; i < 14; i++){
             mathSigns[i].setBackground(Color.PINK);
         }
 
@@ -103,7 +105,7 @@ public class Project implements ActionListener {
         panel.add(clearSign);
         panel.add(deleteSign);
         panel.add(tangentSign);
-        panel.add(cotangentSign);
+        panel.add(percentageSign);
         panel.add(squareRootSign);
         panel.add(squareSign);
         panel.add(numbers[1]);
@@ -136,8 +138,8 @@ public class Project implements ActionListener {
     }
 
     public void createChart(double usersNumber, double calculatedPoint, String function){
+        XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries(function + "(x)");
-        XYSeries highlightedPointSeries = new XYSeries("Obliczony punkt");
 
         for(double x = usersNumber -2 * Math.PI; x <= usersNumber + 2 * Math.PI; x += 0.1){
             switch(function) {
@@ -151,18 +153,16 @@ public class Project implements ActionListener {
                     if (Math.abs(Math.cos(x)) > 0.0001) {
                         series.add(x, Math.tan(x));
                     }
-                    break;
-                case "ctg":
-                    if (Math.abs(Math.cos(x)) > 0.0001) {
-                        series.add(x, 1/ Math.tan(x));
+                    else{
+                        dataset.addSeries(series);
+                        series = new XYSeries(function + "(x)");
                     }
                     break;
             }
         }
 
+        XYSeries highlightedPointSeries = new XYSeries("Obliczony punkt");
         highlightedPointSeries.add(usersNumber, calculatedPoint);
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(series);
         dataset.addSeries(highlightedPointSeries);
 
@@ -174,6 +174,9 @@ public class Project implements ActionListener {
 
         XYPlot plot = chart.getXYPlot();
         plot.getDomainAxis().setRange(usersNumber - 2 * Math.PI, usersNumber + 2 * Math.PI);
+        if(function.equals("tan")) {
+            plot.getRangeAxis().setRange(-10, 10);
+        }
 
         ValueMarker yMarker = new ValueMarker(0);
         yMarker.setPaint(Color.blue);
@@ -189,6 +192,7 @@ public class Project implements ActionListener {
         plot.addDomainMarker(xResultMarker);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+
         renderer.setSeriesLinesVisible(0,true);
         renderer.setSeriesShapesVisible(0, false);
         renderer.setSeriesLinesVisible(1,false);
@@ -275,14 +279,15 @@ public class Project implements ActionListener {
             createChart(num1, finalValue,function);
             finalValue = num1;
         }
-        else if(e.getSource() == cotangentSign){
-            function = "ctg";
-            num1 = Double.parseDouble(textField.getText());
-            num1 = Math.toRadians(num1);
-            finalValue = 1 / Math.tan(num1);
-            textField.setText(String.valueOf(finalValue));
-            createChart(num1, finalValue,function);
-            finalValue = num1;
+        else if(e.getSource() == percentageSign){
+            if(!presentNumbers.isEmpty()){
+                num1 = Double.parseDouble(textField.getText());
+                double num2 = presentNumbers.getLast();
+                finalValue = num1 * num2 / 100;
+                presentNumbers.add(finalValue);
+                textField.setText(String.valueOf(finalValue));
+                finalValue = num1;
+            }
         }
 
         else if(e.getSource() == dotSign){                          //obsluga kropki
@@ -300,6 +305,8 @@ public class Project implements ActionListener {
                 textField.setText("ERROR");
                 return;
             }
+
+            chartPanel.setVisible(false);
 
             presentNumbers.add(Double.parseDouble(textField.getText()));
 
