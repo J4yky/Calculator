@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
@@ -137,7 +138,7 @@ public class Project implements ActionListener {
         XYSeries series = new XYSeries(function + "(x)");
         XYSeries highlightedPointSeries = new XYSeries("Obliczony punkt");
 
-        for(double x = -2 * Math.PI; x <= 2 * Math.PI; x += 0.1){
+        for(double x = usersNumber -2 * Math.PI; x <= usersNumber + 2 * Math.PI; x += 0.1){
             switch(function) {
                 case "sin":
                     series.add(x, Math.sin(x));
@@ -156,13 +157,7 @@ public class Project implements ActionListener {
             }
         }
 
-        if(function.equals("ctg") && Math.tan(calculatedPoint) != 0) {
-            highlightedPointSeries.add(usersNumber, calculatedPoint);
-        }
-        else {
-            highlightedPointSeries.add(usersNumber, calculatedPoint);
-        }
-
+        highlightedPointSeries.add(usersNumber, calculatedPoint);
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(series);
@@ -175,7 +170,20 @@ public class Project implements ActionListener {
         );
 
         XYPlot plot = chart.getXYPlot();
-        plot.getDomainAxis().setRange(-2 * Math.PI, 2 * Math.PI);
+        plot.getDomainAxis().setRange(usersNumber - 2 * Math.PI, usersNumber + 2 * Math.PI);
+
+        ValueMarker yMarker = new ValueMarker(0);
+        yMarker.setPaint(Color.blue);
+        ValueMarker xMarker = new ValueMarker(0);
+        xMarker.setPaint(Color.blue);
+
+        ValueMarker yResultMarker = new ValueMarker(calculatedPoint);
+        ValueMarker xResultMarker = new ValueMarker(usersNumber);
+
+        plot.addRangeMarker(yMarker);
+        plot.addDomainMarker(xMarker);
+        plot.addRangeMarker(yResultMarker);
+        plot.addDomainMarker(xResultMarker);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesLinesVisible(0,true);
