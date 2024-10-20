@@ -11,6 +11,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import java.lang.Math;
 
 public class Project implements ActionListener {
     JFrame frame;
@@ -147,11 +148,13 @@ public class Project implements ActionListener {
                     series.add(x, Math.cos(x));
                     break;
                 case "tan":
-                    series.add(x, Math.tan(x));
+                    if (Math.abs(Math.cos(x)) > 0.0001) {
+                        series.add(x, Math.tan(x));
+                    }
                     break;
                 case "ctg":
-                    if(Math.tan(x) != 0) {
-                        series.add(x, 1 / Math.tan(x));
+                    if (Math.abs(Math.cos(x)) > 0.0001) {
+                        series.add(x, 1/ Math.tan(x));
                     }
                     break;
             }
@@ -247,6 +250,7 @@ public class Project implements ActionListener {
         else if(e.getSource() == sineSign){
             function = "sin";
             num1 = Double.parseDouble(textField.getText());
+            num1 = Math.toRadians(num1);
             finalValue = Math.sin(num1);
             textField.setText(String.valueOf(finalValue));
             createChart(num1, finalValue,function);
@@ -256,6 +260,7 @@ public class Project implements ActionListener {
         else if(e.getSource() == cosineSign){
             function = "cos";
             num1 = Double.parseDouble(textField.getText());
+            num1 = Math.toRadians(num1);
             finalValue = Math.cos(num1);
             textField.setText(String.valueOf(finalValue));
             createChart(num1, finalValue,function);
@@ -264,6 +269,7 @@ public class Project implements ActionListener {
         else if(e.getSource() == tangentSign){
             function = "tan";
             num1 = Double.parseDouble(textField.getText());
+            num1 = Math.toRadians(num1);
             finalValue = Math.tan(num1);
             textField.setText(String.valueOf(finalValue));
             createChart(num1, finalValue,function);
@@ -272,6 +278,7 @@ public class Project implements ActionListener {
         else if(e.getSource() == cotangentSign){
             function = "ctg";
             num1 = Double.parseDouble(textField.getText());
+            num1 = Math.toRadians(num1);
             finalValue = 1 / Math.tan(num1);
             textField.setText(String.valueOf(finalValue));
             createChart(num1, finalValue,function);
