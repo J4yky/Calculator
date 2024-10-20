@@ -29,9 +29,11 @@ public class Project implements ActionListener {
     Font font1 = new Font("SansSerif", Font.BOLD, 50), font2 = new Font("SansSerif", Font.BOLD, 20);
     double num1 = 0, finalValue = 0;
     String function = "";
+    Dimension defaultFrameSize;
     Project(){
         frame = new JFrame("KalKULAtor");
         frame.setSize(600,600);
+        defaultFrameSize = frame.getSize();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -202,6 +204,7 @@ public class Project implements ActionListener {
 
         chartPanel.setChart(chart);
         chartPanel.setVisible(true);
+        frame.pack();
         frame.revalidate();
         frame.repaint();
     }
@@ -307,6 +310,9 @@ public class Project implements ActionListener {
             }
 
             chartPanel.setVisible(false);
+            frame.setSize(defaultFrameSize);
+            frame.revalidate();
+            frame.repaint();
 
             presentNumbers.add(Double.parseDouble(textField.getText()));
 
