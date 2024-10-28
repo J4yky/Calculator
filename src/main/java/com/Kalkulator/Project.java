@@ -195,7 +195,7 @@ public class Project implements ActionListener {
                 rootPoints1.add(x1,0);
                 rootPoints2.add(x2,0);
 
-                for(double x = p - x1 - 2; x <= p + x2 + 2; x += 0.1) {
+                for(double x = x1 - 2; x <= x2 + 2; x += 0.1) {
                     series.add(x, a * x * x + b * x + c);
                 }
             }
@@ -203,7 +203,7 @@ public class Project implements ActionListener {
                 x1 = -b /(2 * a);
                 rootPoints1.add(x1,0);
 
-                for(double x = p - x1 - 2; x <= p + x1 + 2; x += 0.1) {
+                for(double x = x1 - 2; x <= x1 + 2; x += 0.1) {
                     series.add(x, a * x * x + b * x + c);
                 }
             }
@@ -267,7 +267,7 @@ public class Project implements ActionListener {
         if(function.equals("quadratic")){
             if(a > 0){
                 if(delta > 0) {
-                    plot.getDomainAxis().setRange(p - x1 - 2, p + x2 + 2);
+                    plot.getDomainAxis().setRange(x1 - 2, x2 + 2);
                     plot.getRangeAxis().setRange(q - 1, 2);
                 } else{
                     plot.getDomainAxis().setRange(p - 10, p + 10);
@@ -276,7 +276,7 @@ public class Project implements ActionListener {
             }
             if(a < 0){
                 if(delta >0) {
-                    plot.getDomainAxis().setRange(p - x1 - 2, p + x2 + 2);
+                    plot.getDomainAxis().setRange(x1 - 2, x2 + 2);
                     plot.getRangeAxis().setRange(-2, q + 1);
                 } else {
                     plot.getDomainAxis().setRange(p - 10, p + 10);
